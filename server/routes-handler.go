@@ -4,8 +4,8 @@ import (
 	"net/http"
 )
 
-// RenderHome for rendering the landing page...
-func RenderHome(res http.ResponseWriter, req *http.Request) {
+// Signup for registering a user...
+func Signup(res http.ResponseWriter, req *http.Request) {
 	var resp []byte
 	res.WriteHeader(http.StatusOK)
 	res.Write(resp)
