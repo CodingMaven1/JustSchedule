@@ -10,7 +10,7 @@ import (
 func AddRoutes(router *mux.Router) {
 	log.Println("Loading the routes...")
 
-	router.HandleFunc("/", Signup)
+	router.HandleFunc("/signup", Signup).Methods("POST")
 
 	log.Println("Routes Loaded!")
 }
