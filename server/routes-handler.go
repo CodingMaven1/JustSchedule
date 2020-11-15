@@ -79,3 +79,48 @@ func Signup(res http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(res).Encode(response)
 	return
 }
+
+func Login(res http.ResponseWriter, req *http.Request) {
+	res.Header().Set("Content-Type", "application/json")
+
+	var user User
+	var result User
+	var response Response
+
+	body, err := ioutil.ReadAll(req.Body)
+	err = json.Unmarshal(body, &user)
+
+	if err != nil {
+		response.Error = "There was some error!"
+		json.NewEncoder(res).Encode(response)
+		return
+	}
+
+	users, err := ConnectToDB()
+
+	if err != nil{
+		response.Error = "Error while connecting to DB"
+		json.NewEncoder(res).Encode(response)
+		return
+	}
+
+	 err = users.FindOne(context.Background(), bson.D{{"username", user.Username}}).Decode(&result)
+
+	 if err != nil {
+		 response.Error = "Invalid Username"
+		 json.NewEncoder(res).Encode(response)
+		 return
+	 }
+
+	 err = bcrypt.CompareHashAndPassword([]byte(result.Password), []byte(user.Password))
+
+	 if err != nil{
+		 response.Error = "Wrong Password"
+		 json.NewEncoder(res).Encode(response)
+		 return
+	 }
+
+	 response.Result = "Logged In"
+	 json.NewEncoder(res).Encode(response)
+	 return
+}
