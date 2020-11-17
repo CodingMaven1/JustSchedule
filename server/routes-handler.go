@@ -24,6 +24,12 @@ type Response struct {
 	Result string `json:"result"`
 }
 
+type Meeting struct {
+	Date string `json:"date"`
+	Duration int16 `json:"duration"`
+	Agenda string `json:"agenda"`
+}
+
 // Signup for registering a user...
 func Signup(res http.ResponseWriter, req *http.Request) {
 
@@ -40,7 +46,7 @@ func Signup(res http.ResponseWriter, req *http.Request) {
 		json.NewEncoder(res).Encode(response)
 		return
 	}
-	users, err := ConnectToDB()
+	users, err := ConnectToDB("users")
 	if err != nil {
 		response.Error = "Some DB error!"
 		json.NewEncoder(res).Encode(response)
@@ -81,6 +87,7 @@ func Signup(res http.ResponseWriter, req *http.Request) {
 	return
 }
 
+// Login for login functionality...
 func Login(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
 
@@ -97,7 +104,7 @@ func Login(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	users, err := ConnectToDB()
+	users, err := ConnectToDB("users")
 
 	if err != nil{
 		response.Error = "Error while connecting to DB"
@@ -139,4 +146,30 @@ func Login(res http.ResponseWriter, req *http.Request) {
 	 result.Token = tokenString
 	 json.NewEncoder(res).Encode(result)
 	 return
+}
+
+//ScheduleMeet function for creating a new meeting...
+func ScheduleMeet (res http.ResponseWriter, req *http.Request) {
+	res.Header().Set("Content-Type", "application/json")
+
+	var meeting Meeting
+	var result Response
+
+	body, err := ioutil.ReadAll(req.Body)
+	err = json.Unmarshal(body, &meeting)
+
+	if err != nil {
+		result.Error = "There was some error!"
+		json.NewEncoder(res).Encode(result)
+		return
+	}
+
+	meets, err := ConnectToDB("meets")
+
+	if err != nil {
+		result.Error = "Error while connecting to the DB"
+		json.NewEncoder(res).Encode(result)
+		return
+	}
+
 }

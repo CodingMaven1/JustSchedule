@@ -10,7 +10,7 @@ import (
 )
 
 //ConnectToDB function for connection to the database...
-func ConnectToDB() (*mongo.Collection, error) {
+func ConnectToDB(collectioname string) (*mongo.Collection, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
@@ -21,7 +21,7 @@ func ConnectToDB() (*mongo.Collection, error) {
 	if err != nil {
 		return nil, err
 	}
-	collection := client.Database("JustSchedule").Collection("users")
+	collection := client.Database("JustSchedule").Collection(collectioname)
 
 	return collection, nil
 }

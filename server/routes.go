@@ -12,6 +12,7 @@ func AddRoutes(router *mux.Router) {
 
 	router.HandleFunc("/signup", Signup).Methods("POST")
 	router.HandleFunc("/login", Login).Methods("POST")
+	router.HandleFunc("/newmeeting", ScheduleMeet).Methods("POST")
 
 	log.Println("Routes Loaded!")
 }
