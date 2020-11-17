@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 
 	"go.mongodb.org/mongo-driver/bson"
+	jwt "github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -120,7 +121,22 @@ func Login(res http.ResponseWriter, req *http.Request) {
 		 return
 	 }
 
-	 response.Result = "Logged In"
-	 json.NewEncoder(res).Encode(response)
+	 token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		 "username": result.Username,
+		 "firstname": result.Firstname,
+		 "lastname": result.Lastname,
+	 })
+
+	 tokenString, err := token.SignedString([]byte("JustSchedule"))
+
+	 if err != nil {
+		 response.Error = "Error while generating token"
+		 json.NewEncoder(res).Encode(response)
+		 return
+	 }
+
+	 result.Password = ""
+	 result.Token = tokenString
+	 json.NewEncoder(res).Encode(result)
 	 return
 }
